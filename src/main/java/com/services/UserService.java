@@ -57,7 +57,7 @@ public class UserService {
     @GET
     @Path("filterByLastName/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<UserEntity> getUsersByName(@PathParam("name") String name){
+    public List<UserEntity> getUsersByLastName(@PathParam("name") String name){
         return userOps.getUserByLastName(name);
     }
 
