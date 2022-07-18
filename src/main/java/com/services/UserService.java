@@ -1,9 +1,8 @@
 package com.services;
 
 import com.businesslogic.UserOperations;
-import com.exception.DataNotFoundException;
-import com.model.UserSummary;
 import com.model.entities.UserEntity;
+import com.model.enums.UserType;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -49,10 +48,24 @@ public class UserService {
     }
 
     @GET
-    @Path("summary")
+    @Path("filterByFirstName/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<UserSummary> getUserSummary(){
-        return userOps.getUserSummary();
+    public List<UserEntity> getUsersByFirstName(@PathParam("name") String name){
+        return userOps.getUserByFirstName(name);
+    }
+
+    @GET
+    @Path("filterByLastName/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserEntity> getUsersByName(@PathParam("name") String name){
+        return userOps.getUserByLastName(name);
+    }
+
+    @GET
+    @Path("filterByType/{type}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<UserEntity> getUsersByType(@PathParam("type") UserType type){
+        return userOps.getUserByType(type);
     }
 
 }
