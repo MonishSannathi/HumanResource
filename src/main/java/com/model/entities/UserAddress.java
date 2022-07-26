@@ -1,13 +1,7 @@
 package com.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.model.enums.AddrType;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -57,20 +51,17 @@ public class UserAddress {
     @Column(name="stateCode")
     private String stateCode;
 
-    @NotNull(message = "User Mapping is required")
-    @ManyToOne(fetch = FetchType.LAZY,optional = false)
-    @JoinColumn(name = "userId", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonProperty("userEntity")
-    private UserEntity userEntity;
 
-    @JsonbTransient
-    public UserEntity getUserEntity() {
-        return userEntity;
+    @NotNull(message = "User Mapping is required")
+    @Column(name="userId")
+    private int userId;
+
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUserEntity(UserEntity userEntity) {
-        this.userEntity = userEntity;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public int getId() {

@@ -6,8 +6,9 @@ import com.model.entities.UserAddress;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
-@Path("users/address")
+@Path("users/{userId}/address")
 public class UserAddressService {
     private UserAddressOperations userAddressops;
     public UserAddressService(){
@@ -16,17 +17,19 @@ public class UserAddressService {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createUserAddress(UserAddress entity){
+    public Response createUserAddress(@PathParam("userId") int userId,UserAddress entity){
+        entity.setUserId(userId);
         userAddressops.create(entity);
 
         return Response.status(Response.Status.CREATED).build();
     }
 
     @GET
-    @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public UserAddress getUserAddressById(@PathParam("id") int id){
-        UserAddress ue = userAddressops.find(id);
+    public List<UserAddress> getUserAddressById(@PathParam("userId") int userId){
+        List<UserAddress> ue = userAddressops.findByUser(userId);
+
+
         return ue;
     }
 }

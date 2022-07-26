@@ -1,18 +1,16 @@
 package com.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.model.enums.Gender;
 import com.model.enums.UserType;
 
-import javax.json.bind.annotation.JsonbTransient;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
-@JsonIgnoreProperties(value={ "userAddresses" }, allowSetters= true)
+
 @Entity
 @Table(name="User")
 public class UserEntity {
@@ -62,11 +60,10 @@ public class UserEntity {
     @Column(name="annualSalary")
     private int annualSalary;
 
-    @OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY, mappedBy = "userEntity")
-    @JsonProperty("userAddresses")
+
+    @OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY, mappedBy = "userId")
     private Set<UserAddress> userAddresses;
 
-    @JsonbTransient
     public Set<UserAddress> getUserAddresses() {
         return userAddresses;
     }

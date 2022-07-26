@@ -1,6 +1,7 @@
 package com.services;
 
 import com.businesslogic.UserOperations;
+import com.model.UserSummary;
 import com.model.entities.UserEntity;
 import com.model.enums.UserType;
 
@@ -8,6 +9,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Optional;
 
 @Path("users")
 public class UserService {
@@ -48,24 +50,18 @@ public class UserService {
     }
 
     @GET
-    @Path("filterByFirstName/{name}")
+    @Path("summary")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<UserEntity> getUsersByFirstName(@PathParam("name") String name){
-        return userOps.getUserByFirstName(name);
+    public List<UserSummary> getUserSummary(){
+        return userOps.getUserSummary();
     }
 
     @GET
-    @Path("filterByLastName/{name}")
+    @Path("search")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<UserEntity> getUsersByLastName(@PathParam("name") String name){
-        return userOps.getUserByLastName(name);
+    public List<UserEntity> getUsersBySearch(@QueryParam("firstName") Optional<String> firstName, @QueryParam("lastName") Optional<String> lastName, @QueryParam("userType") Optional<UserType> userType){
+        return userOps.getUsersByFilter(firstName,lastName,userType);
     }
 
-    @GET
-    @Path("filterByType/{type}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<UserEntity> getUsersByType(@PathParam("type") UserType type){
-        return userOps.getUserByType(type);
-    }
 
 }

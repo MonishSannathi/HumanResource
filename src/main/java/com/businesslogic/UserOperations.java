@@ -8,12 +8,9 @@ import com.model.entities.UserAddress;
 import com.model.entities.UserEntity;
 import com.model.enums.UserType;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+
+import java.util.*;
+
 
 public class UserOperations extends EntityDataAccessManager<UserEntity> {
     private  UserAddressOperations userAddressOps;
@@ -44,30 +41,6 @@ public class UserOperations extends EntityDataAccessManager<UserEntity> {
         return userSummaries;
     }
 
-    //Filter By First Name
-    public List<UserEntity> getUserByFirstName(String name){
-        List<UserEntity> ue = super.findAll();
-        List<UserEntity> userEntitiesFiltered = ue.stream().filter(u -> u.getFirstName().compareTo(name) == 0).collect(Collectors.toList());
-
-        return userEntitiesFiltered;
-    }
-
-    //Filter By Last Name
-    public List<UserEntity> getUserByLastName(String name){
-        List<UserEntity> ue = super.findAll();
-        List<UserEntity> userEntitiesFiltered = ue.stream().filter(u -> u.getLastName().compareTo(name) == 0).collect(Collectors.toList());
-
-        return userEntitiesFiltered;
-    }
-
-    //Filter By Type
-    public List<UserEntity> getUserByType(UserType type){
-        List<UserEntity> ue = super.findAll();
-        List<UserEntity> userEntitiesFiltered = ue.stream().filter(u -> u.getUserType() == type).collect(Collectors.toList());
-
-        return userEntitiesFiltered;
-    }
-
     /* Finds the User by Id*/
     @Override
     public UserEntity find(Object id) {
@@ -79,17 +52,23 @@ public class UserOperations extends EntityDataAccessManager<UserEntity> {
     }
 
     /* Creates the User*/
+    /*
+        If the User Address is Passed
+        Store them and create address independently
+        Since Unique ID will be created after the user created in DB
+    */
+
     @Override
     public void create(UserEntity entity) {
         Set<UserAddress> userAddresses = new HashSet<>();
-        if(!entity.getUserAddresses().isEmpty()){
+        if(!Objects.isNull(entity.getUserAddresses()) && !entity.getUserAddresses().isEmpty()){
             userAddresses = entity.getUserAddresses();
             entity.setUserAddresses(null);
         }
         super.create(entity);
         if(!userAddresses.isEmpty()){
             for(UserAddress ua:userAddresses){
-                ua.setUserEntity(entity);
+                ua.setUserId(entity.getId());
                 userAddressOps.create(ua);
             }
         }
@@ -113,9 +92,33 @@ public class UserOperations extends EntityDataAccessManager<UserEntity> {
     public List<UserEntity> findAll(){
         List<UserEntity> userEntityList = super.findAll();
 
-        if(userEntityList == null) throw new DataNotFoundException("User List is not Empty");
+        if(userEntityList == null) throw new DataNotFoundException("User List is Empty");
 
         return userEntityList;
     }
 
+    /*
+        Use HashMap to send column names and their values
+     */
+    public List<UserEntity> getUsersByFilter(Optional<String> firstName,Optional<String> lastName, Optional<UserType> userType){
+        Map<String,Object> map = new HashMap<>();
+
+        if (firstName.isPresent() && (firstName.get().length() > 0)) {
+            map.put("firstName", firstName.get());
+        }
+
+        if (lastName.isPresent() && (lastName.get().length() > 0)) {
+            map.put("lastName", lastName.get());
+        }
+
+        if (userType.isPresent()) {
+            map.put("userType", userType.get());
+        }
+
+        List<UserEntity> userEntityList = super.filter(map);
+
+        if(userEntityList == null) throw new DataNotFoundException("User List is Empty");
+
+        return userEntityList;
+    }
 }
